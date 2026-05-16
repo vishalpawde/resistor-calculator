@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Resistor Colour Code Calculator</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- Animated particle background -->
+  <canvas id="particles-canvas"></canvas>
+
+  <!-- ============ HERO HEADER ============ -->
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="hero-icon">⚡</div>
+      <h1 class="hero-title">
+        <span class="title-line1">RESISTOR</span>
+        <span class="title-line2">COLOUR CODE</span>
+        <span class="title-line3">CALCULATOR</span>
+      </h1>
+      <p class="hero-subtitle">Interactive Electronics Learning Tool</p>
+      <div class="neon-line"></div>
+      <div class="hero-badges">
+        <span class="badge badge-mode" id="badge-4">4-Band</span>
+        <span class="badge badge-mode" id="badge-5">5-Band</span>
+        <span class="badge badge-mode" id="badge-6">6-Band</span>
+        <span class="badge">Real-Time</span>
+        <span class="badge">Educational</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ============ EDUCATIONAL INTRO ============ -->
+    <section class="section intro-section">
+      <div class="container">
+        <div class="intro-grid">
+          <div class="glass-card intro-card">
+            <div class="card-glow"></div>
+            <div class="intro-icon-wrap">🔩</div>
+            <h2 class="card-title">What is a Resistor?</h2>
+            <p class="card-text">
+              A resistor is a fundamental electronic component that <strong>limits or controls electric current</strong>
+              in a circuit. The coloured bands printed on its body encode its resistance value, multiplier, and
+              tolerance — a universal language engineers use worldwide.
+            </p>
+            <div class="current-flow">
+              <span class="electron" style="--d:0s"></span>
+              <span class="electron" style="--d:0.4s"></span>
+              <span class="electron" style="--d:0.8s"></span>
+              <span class="electron" style="--d:1.2s"></span>
+              <span class="electron" style="--d:1.6s"></span>
+              <div class="flow-label">⚡ Electric current flow</div>
+            </div>
+          </div>
+
+          <div class="facts-column">
+            <div class="glass-card fact-card">
+              <span class="fact-icon">💡</span>
+              <p><strong>Did You Know?</strong> The colour band system was standardised by the IEC (International Electrotechnical Commission) in the 1920s.</p>
+            </div>
+            <div class="glass-card fact-card">
+              <span class="fact-icon">🎓</span>
+              <p><strong>Mnemonic:</strong> <em>"Bad Beer Rots Our Young Guts But Vodka Goes Well"</em> — Black, Brown, Red, Orange, Yellow, Green, Blue, Violet, Grey, White.</p>
+            </div>
+            <div class="glass-card fact-card">
+              <span class="fact-icon">📐</span>
+              <p><strong>Unit:</strong> Resistance is measured in <strong>Ohms (Ω)</strong>, named after German physicist Georg Simon Ohm.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ BAND MODE SWITCHER ============ -->
+    <section class="section mode-section">
+      <div class="container">
+        <h2 class="section-title">Select Resistor Type</h2>
+        <p class="section-sub">Choose how many colour bands your resistor has</p>
+        <div class="mode-switcher">
+          <button class="mode-btn active" id="mode-4" onclick="setMode(4)">
+            <span class="mode-num">4</span>
+            <span class="mode-label">Band</span>
+            <span class="mode-desc">Standard — 2 digits</span>
+          </button>
+          <button class="mode-btn" id="mode-5" onclick="setMode(5)">
+            <span class="mode-num">5</span>
+            <span class="mode-label">Band</span>
+            <span class="mode-desc">Precision — 3 digits</span>
+          </button>
+          <button class="mode-btn" id="mode-6" onclick="setMode(6)">
+            <span class="mode-num">6</span>
+            <span class="mode-label">Band</span>
+            <span class="mode-desc">High-precision + Temp. Coefficient</span>
+          </button>
+        </div>
+
+        <!-- Band type info card -->
+        <div class="glass-card mode-info-card" id="mode-info">
+          <div class="mode-info-text" id="mode-info-text">
+            <strong>4-Band Resistor:</strong> Two significant digits + multiplier + tolerance.
+            Formula: (D1 × 10 + D2) × Multiplier. Most common type for general-purpose use.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ INTERACTIVE RESISTOR ============ -->
+    <section class="section resistor-section">
+      <div class="container">
+        <h2 class="section-title">Interactive Resistor</h2>
+        <p class="section-sub">Select colour bands below — the resistor updates in real-time</p>
+
+        <div class="resistor-stage">
+          <div class="resistor-wrap" id="resistor">
+            <!-- Wire left -->
+            <div class="wire wire-left"></div>
+            <!-- Resistor body -->
+            <div class="resistor-body" id="resistor-body">
+              <div class="resistor-shine"></div>
+              <div class="band band-1" id="band1" title="First Digit"></div>
+              <div class="band band-2" id="band2" title="Second Digit"></div>
+              <div class="band band-3" id="band3" title="Third Digit / Multiplier"></div>
+              <div class="band band-4" id="band4" title="Multiplier / Tolerance"></div>
+              <div class="band-gap" id="band-gap"></div>
+              <div class="band band-5" id="band5" title="Tolerance"></div>
+              <div class="band band-6" id="band6" title="Temp. Coefficient"></div>
+            </div>
+            <!-- Wire right -->
+            <div class="wire wire-right"></div>
+
+            <!-- Band labels -->
+            <div class="band-labels" id="band-labels">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ CONTROL PANEL ============ -->
+    <section class="section controls-section">
+      <div class="container">
+        <h2 class="section-title">Control Panel</h2>
+        <div class="controls-grid" id="controls-grid">
+
+          <!-- Band 1 -->
+          <div class="control-card glass-card" id="ctrl-1">
+            <div class="control-header">
+              <span class="control-num">01</span>
+              <span class="control-label" id="ctrl-label-1">First Digit</span>
+            </div>
+            <div class="select-wrap">
+              <div class="color-preview" id="preview1"></div>
+              <select id="band1-select" onchange="updateBand(1)">
+                <option value="black"   data-color="#1a1a1a" data-val="0">Black — 0</option>
+                <option value="brown"   data-color="#8B4513" data-val="1">Brown — 1</option>
+                <option value="red"     data-color="#ff2020" data-val="2">Red — 2</option>
+                <option value="orange"  data-color="#ff8800" data-val="3">Orange — 3</option>
+                <option value="yellow"  data-color="#FFD700" data-val="4" selected>Yellow — 4</option>
+                <option value="green"   data-color="#00aa44" data-val="5">Green — 5</option>
+                <option value="blue"    data-color="#1a6aff" data-val="6">Blue — 6</option>
+                <option value="violet"  data-color="#8B00FF" data-val="7">Violet — 7</option>
+                <option value="grey"    data-color="#888888" data-val="8">Grey — 8</option>
+                <option value="white"   data-color="#eeeeee" data-val="9">White — 9</option>
+              </select>
+            </div>
+            <div class="digit-display" id="digit1">4</div>
+          </div>
+
+          <!-- Band 2 -->
+          <div class="control-card glass-card" id="ctrl-2">
+            <div class="control-header">
+              <span class="control-num">02</span>
+              <span class="control-label" id="ctrl-label-2">Second Digit</span>
+            </div>
+            <div class="select-wrap">
+              <div class="color-preview" id="preview2"></div>
+              <select id="band2-select" onchange="updateBand(2)">
+                <option value="black"   data-color="#1a1a1a" data-val="0">Black — 0</option>
+                <option value="brown"   data-color="#8B4513" data-val="1">Brown — 1</option>
+                <option value="red"     data-color="#ff2020" data-val="2">Red — 2</option>
+                <option value="orange"  data-color="#ff8800" data-val="3">Orange — 3</option>
+                <option value="yellow"  data-color="#FFD700" data-val="4">Yellow — 4</option>
+                <option value="green"   data-color="#00aa44" data-val="5">Green — 5</option>
+                <option value="blue"    data-color="#1a6aff" data-val="6">Blue — 6</option>
+                <option value="violet"  data-color="#8B00FF" data-val="7" selected>Violet — 7</option>
+                <option value="grey"    data-color="#888888" data-val="8">Grey — 8</option>
+                <option value="white"   data-color="#eeeeee" data-val="9">White — 9</option>
+              </select>
+            </div>
+            <div class="digit-display" id="digit2">7</div>
+          </div>
+
+          <!-- Band 3 — Third Digit (5/6) or Multiplier (4) -->
+          <div class="control-card glass-card" id="ctrl-3">
+            <div class="control-header">
+              <span class="control-num">03</span>
+              <span class="control-label" id="ctrl-label-3">Multiplier</span>
+            </div>
+            <div class="select-wrap">
+              <div class="color-preview" id="preview3"></div>
+              <!-- Digit select (shown for 5/6 band) -->
+              <select id="band3-digit-select" onchange="updateBand(3)" style="display:none">
+                <option value="black"   data-color="#1a1a1a" data-val="0">Black — 0</option>
+                <option value="brown"   data-color="#8B4513" data-val="1">Brown — 1</option>
+                <option value="red"     data-color="#ff2020" data-val="2" selected>Red — 2</option>
+                <option value="orange"  data-color="#ff8800" data-val="3">Orange — 3</option>
+                <option value="yellow"  data-color="#FFD700" data-val="4">Yellow — 4</option>
+                <option value="green"   data-color="#00aa44" data-val="5">Green — 5</option>
+                <option value="blue"    data-color="#1a6aff" data-val="6">Blue — 6</option>
+                <option value="violet"  data-color="#8B00FF" data-val="7">Violet — 7</option>
+                <option value="grey"    data-color="#888888" data-val="8">Grey — 8</option>
+                <option value="white"   data-color="#eeeeee" data-val="9">White — 9</option>
+              </select>
+              <!-- Multiplier select (shown for 4 band) -->
+              <select id="band3-select" onchange="updateBand(3)">
+                <option value="black"   data-color="#1a1a1a"  data-val="1">Black — ×1</option>
+                <option value="brown"   data-color="#8B4513"  data-val="10">Brown — ×10</option>
+                <option value="red"     data-color="#ff2020"  data-val="100" selected>Red — ×100</option>
+                <option value="orange"  data-color="#ff8800"  data-val="1000">Orange — ×1K</option>
+                <option value="yellow"  data-color="#FFD700"  data-val="10000">Yellow — ×10K</option>
+                <option value="green"   data-color="#00aa44"  data-val="100000">Green — ×100K</option>
+                <option value="blue"    data-color="#1a6aff"  data-val="1000000">Blue — ×1M</option>
+                <option value="gold"    data-color="#CFB53B"  data-val="0.1">Gold — ×0.1</option>
+                <option value="silver"  data-color="#C0C0C0"  data-val="0.01">Silver — ×0.01</option>
+              </select>
+            </div>
+            <div class="digit-display" id="digit3">×100</div>
+          </div>
+
+          <!-- Band 4 — Multiplier (5/6) or Tolerance (4) -->
+          <div class="control-card glass-card" id="ctrl-4">
+            <div class="control-header">
+              <span class="control-num">04</span>
+              <span class="control-label" id="ctrl-label-4">Tolerance</span>
+            </div>
+            <div class="select-wrap">
+              <div class="color-preview" id="preview4"></div>
+              <!-- Tolerance select (4-band) -->
+              <select id="band4-select" onchange="updateBand(4)">
+                <option value="brown"   data-color="#8B4513" data-val="1">Brown — ±1%</option>
+                <option value="red"     data-color="#ff2020" data-val="2">Red — ±2%</option>
+                <option value="gold"    data-color="#CFB53B" data-val="5" selected>Gold — ±5%</option>
+                <option value="silver"  data-color="#C0C0C0" data-val="10">Silver — ±10%</option>
+              </select>
+              <!-- Multiplier select (5/6-band) -->
+              <select id="band4-mult-select" onchange="updateBand(4)" style="display:none">
+                <option value="black"   data-color="#1a1a1a"  data-val="1">Black — ×1</option>
+                <option value="brown"   data-color="#8B4513"  data-val="10">Brown — ×10</option>
+                <option value="red"     data-color="#ff2020"  data-val="100">Red — ×100</option>
+                <option value="orange"  data-color="#ff8800"  data-val="1000">Orange — ×1K</option>
+                <option value="yellow"  data-color="#FFD700"  data-val="10000">Yellow — ×10K</option>
+                <option value="green"   data-color="#00aa44"  data-val="100000">Green — ×100K</option>
+                <option value="blue"    data-color="#1a6aff"  data-val="1000000">Blue — ×1M</option>
+                <option value="gold"    data-color="#CFB53B"  data-val="0.1">Gold — ×0.1</option>
+                <option value="silver"  data-color="#C0C0C0"  data-val="0.01">Silver — ×0.01</option>
+              </select>
+            </div>
+            <div class="digit-display" id="digit4">±5%</div>
+          </div>
+
+          <!-- Band 5 — Tolerance (5/6-band) [hidden in 4-band] -->
+          <div class="control-card glass-card hidden-band" id="ctrl-5">
+            <div class="control-header">
+              <span class="control-num">05</span>
+              <span class="control-label" id="ctrl-label-5">Tolerance</span>
+            </div>
+            <div class="select-wrap">
+              <div class="color-preview" id="preview5"></div>
+              <select id="band5-select" onchange="updateBand(5)">
+                <option value="brown"   data-color="#8B4513" data-val="1">Brown — ±1%</option>
+                <option value="red"     data-color="#ff2020" data-val="2">Red — ±2%</option>
+                <option value="green"   data-color="#00aa44" data-val="0.5">Green — ±0.5%</option>
+                <option value="blue"    data-color="#1a6aff" data-val="0.25">Blue — ±0.25%</option>
+                <option value="violet"  data-color="#8B00FF" data-val="0.1">Violet — ±0.1%</option>
+                <option value="grey"    data-color="#888888" data-val="0.05">Grey — ±0.05%</option>
+                <option value="gold"    data-color="#CFB53B" data-val="5" selected>Gold — ±5%</option>
+                <option value="silver"  data-color="#C0C0C0" data-val="10">Silver — ±10%</option>
+              </select>
+            </div>
+            <div class="digit-display" id="digit5">±5%</div>
+          </div>
+
+          <!-- Band 6 — Temp Coefficient (6-band only) [hidden in 4/5-band] -->
+          <div class="control-card glass-card hidden-band" id="ctrl-6">
+            <div class="control-header">
+              <span class="control-num">06</span>
+              <span class="control-label" id="ctrl-label-6">Temp. Coeff.</span>
+            </div>
+            <div class="select-wrap">
+              <div class="color-preview" id="preview6"></div>
+              <select id="band6-select" onchange="updateBand(6)">
+                <option value="black"   data-color="#1a1a1a" data-val="250">Black — 250 ppm/K</option>
+                <option value="brown"   data-color="#8B4513" data-val="100" selected>Brown — 100 ppm/K</option>
+                <option value="red"     data-color="#ff2020" data-val="50">Red — 50 ppm/K</option>
+                <option value="orange"  data-color="#ff8800" data-val="15">Orange — 15 ppm/K</option>
+                <option value="yellow"  data-color="#FFD700" data-val="25">Yellow — 25 ppm/K</option>
+                <option value="green"   data-color="#00aa44" data-val="20">Green — 20 ppm/K</option>
+                <option value="blue"    data-color="#1a6aff" data-val="10">Blue — 10 ppm/K</option>
+                <option value="violet"  data-color="#8B00FF" data-val="5">Violet — 5 ppm/K</option>
+                <option value="grey"    data-color="#888888" data-val="1">Grey — 1 ppm/K</option>
+                <option value="white"   data-color="#eeeeee" data-val="0">White — 0 ppm/K</option>
+              </select>
+            </div>
+            <div class="digit-display" id="digit6">100 ppm/K</div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ RESULT DISPLAY ============ -->
+    <section class="section result-section">
+      <div class="container">
+        <div class="result-card glass-card">
+          <div class="result-scanline"></div>
+          <div class="result-header">
+            <span class="result-label">⚡ LIVE CALCULATION</span>
+            <span class="result-status">● ACTIVE</span>
+          </div>
+
+          <div class="result-main">
+            <div class="result-value" id="result-value">4,700 Ω</div>
+            <div class="result-formatted" id="result-formatted">4.7 KΩ</div>
+            <div class="result-tolerance" id="result-tolerance">Tolerance: ±5%</div>
+            <div class="result-tempco" id="result-tempco" style="display:none"></div>
+          </div>
+
+          <div class="result-formula" id="result-formula">
+            ( <span id="f-d1">4</span> × 10 + <span id="f-d2">7</span> ) × <span id="f-mult">100</span> = <span id="f-result">4700</span> Ω
+          </div>
+
+          <div class="result-bands" id="result-bands">
+            <!-- Populated by JS -->
+          </div>
+
+          <div class="result-range" id="result-range"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ COLOR REFERENCE TABLE ============ -->
+    <section class="section table-section">
+      <div class="container">
+        <h2 class="section-title">Colour Code Reference Table</h2>
+        <div class="table-wrap glass-card">
+          <table class="color-table">
+            <thead>
+              <tr>
+                <th>Colour</th>
+                <th>Digit</th>
+                <th>Multiplier</th>
+                <th>Tolerance</th>
+                <th>Temp. Coeff.</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="row-black">
+                <td><span class="dot" style="background:#1a1a1a;border:1px solid #444"></span> Black</td>
+                <td>0</td><td>×1</td><td>—</td><td>250 ppm/K</td>
+              </tr>
+              <tr class="row-brown">
+                <td><span class="dot" style="background:#8B4513"></span> Brown</td>
+                <td>1</td><td>×10</td><td>±1%</td><td>100 ppm/K</td>
+              </tr>
+              <tr class="row-red">
+                <td><span class="dot" style="background:#ff2020"></span> Red</td>
+                <td>2</td><td>×100</td><td>±2%</td><td>50 ppm/K</td>
+              </tr>
+              <tr class="row-orange">
+                <td><span class="dot" style="background:#ff8800"></span> Orange</td>
+                <td>3</td><td>×1K</td><td>—</td><td>15 ppm/K</td>
+              </tr>
+              <tr class="row-yellow">
+                <td><span class="dot" style="background:#FFD700"></span> Yellow</td>
+                <td>4</td><td>×10K</td><td>—</td><td>25 ppm/K</td>
+              </tr>
+              <tr class="row-green">
+                <td><span class="dot" style="background:#00aa44"></span> Green</td>
+                <td>5</td><td>×100K</td><td>±0.5%</td><td>20 ppm/K</td>
+              </tr>
+              <tr class="row-blue">
+                <td><span class="dot" style="background:#1a6aff"></span> Blue</td>
+                <td>6</td><td>×1M</td><td>±0.25%</td><td>10 ppm/K</td>
+              </tr>
+              <tr class="row-violet">
+                <td><span class="dot" style="background:#8B00FF"></span> Violet</td>
+                <td>7</td><td>—</td><td>±0.1%</td><td>5 ppm/K</td>
+              </tr>
+              <tr class="row-grey">
+                <td><span class="dot" style="background:#888888"></span> Grey</td>
+                <td>8</td><td>—</td><td>±0.05%</td><td>1 ppm/K</td>
+              </tr>
+              <tr class="row-white">
+                <td><span class="dot" style="background:#eeeeee;border:1px solid #555"></span> White</td>
+                <td>9</td><td>—</td><td>—</td><td>—</td>
+              </tr>
+              <tr class="row-gold">
+                <td><span class="dot" style="background:#CFB53B"></span> Gold</td>
+                <td>—</td><td>×0.1</td><td>±5%</td><td>—</td>
+              </tr>
+              <tr class="row-silver">
+                <td><span class="dot" style="background:#C0C0C0"></span> Silver</td>
+                <td>—</td><td>×0.01</td><td>±10%</td><td>—</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ HOW IT WORKS ============ -->
+    <section class="section how-section">
+      <div class="container">
+        <h2 class="section-title">How It Works</h2>
+        <div class="steps-grid" id="steps-grid">
+          <!-- 4-band steps -->
+          <div class="step-card glass-card step-4">
+            <div class="step-num">01</div>
+            <div class="step-icon">🎨</div>
+            <h3>First Band</h3>
+            <p>The first colour band gives the <strong>1st significant digit</strong>.</p>
+          </div>
+          <div class="step-arrow step-4">→</div>
+          <div class="step-card glass-card step-4">
+            <div class="step-num">02</div>
+            <div class="step-icon">🎨</div>
+            <h3>Second Band</h3>
+            <p>The second band gives the <strong>2nd significant digit</strong>.</p>
+          </div>
+          <div class="step-arrow step-5 step-6" style="display:none">→</div>
+          <div class="step-card glass-card step-5 step-6" style="display:none">
+            <div class="step-num">03</div>
+            <div class="step-icon">🎨</div>
+            <h3>Third Band</h3>
+            <p>The third band gives the <strong>3rd significant digit</strong>.</p>
+          </div>
+          <div class="step-arrow">→</div>
+          <div class="step-card glass-card">
+            <div class="step-num step-num-mult"></div>
+            <div class="step-icon">✖️</div>
+            <h3>Multiplier</h3>
+            <p>Multiplies the digits to get the final Ω value.</p>
+          </div>
+          <div class="step-arrow">→</div>
+          <div class="step-card glass-card">
+            <div class="step-num step-num-tol"></div>
+            <div class="step-icon">🎯</div>
+            <h3>Tolerance</h3>
+            <p>Tells you the <strong>accuracy</strong> of the resistor (e.g. ±1%).</p>
+          </div>
+          <div class="step-arrow step-6" style="display:none">→</div>
+          <div class="step-card glass-card step-6" style="display:none">
+            <div class="step-num">06</div>
+            <div class="step-icon">🌡️</div>
+            <h3>Temp. Coeff.</h3>
+            <p>Temperature coefficient in <strong>ppm/K</strong> — how resistance changes with heat.</p>
+          </div>
+          <div class="step-arrow">→</div>
+          <div class="step-card glass-card step-result">
+            <div class="step-num">⚡</div>
+            <div class="step-icon">📟</div>
+            <h3>Result</h3>
+            <p>Instant <strong>resistance value</strong> in Ω, KΩ, or MΩ.</p>
+          </div>
+        </div>
+
+        <div class="formula-card glass-card" id="formula-card">
+          <h3>The Formula</h3>
+          <div class="formula-display" id="formula-display">
+            R = ( D1 × 10 + D2 ) × Multiplier
+          </div>
+          <p id="formula-sub">Where D1 = First digit, D2 = Second digit</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ EXAMPLE SECTION ============ -->
+    <section class="section example-section">
+      <div class="container">
+        <h2 class="section-title">Example Calculation</h2>
+
+        <div class="example-card glass-card">
+          <div class="example-top">
+            <div class="example-resistor">
+              <div class="ex-wire-l"></div>
+              <div class="ex-body">
+                <div class="ex-band" style="background:#FFD700"></div>
+                <div class="ex-band" style="background:#8B00FF"></div>
+                <div class="ex-band" style="background:#ff2020"></div>
+                <div class="ex-gap"></div>
+                <div class="ex-band" style="background:#CFB53B"></div>
+              </div>
+              <div class="ex-wire-r"></div>
+            </div>
+            <div class="example-labels">
+              <span style="color:#FFD700">Yellow</span>
+              <span style="color:#cc66ff">Violet</span>
+              <span style="color:#ff4444">Red</span>
+              <span style="color:#CFB53B">Gold</span>
+            </div>
+          </div>
+
+          <div class="example-steps">
+            <div class="ex-step">
+              <span class="ex-step-dot" style="background:#FFD700"></span>
+              <span>Yellow = <strong>4</strong></span>
+            </div>
+            <div class="ex-step">
+              <span class="ex-step-dot" style="background:#8B00FF"></span>
+              <span>Violet = <strong>7</strong></span>
+            </div>
+            <div class="ex-step">
+              <span class="ex-step-dot" style="background:#ff2020"></span>
+              <span>Red = <strong>×100</strong></span>
+            </div>
+            <div class="ex-step">
+              <span class="ex-step-dot" style="background:#CFB53B"></span>
+              <span>Gold = <strong>±5%</strong></span>
+            </div>
+          </div>
+
+          <div class="example-calc">
+            <div class="calc-line">( 4 × 10 + 7 ) × 100</div>
+            <div class="calc-line">= 47 × 100</div>
+            <div class="calc-line">= <span class="calc-answer">4,700 Ω</span></div>
+            <div class="calc-tol">Tolerance: ±5%  →  Range: 4,465 Ω to 4,935 Ω</div>
+          </div>
+
+          <button class="try-btn" onclick="loadExample()">⚡ Load This Example</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <span class="footer-icon">⚡</span>
+          <span class="footer-title">RESISTOR CALC</span>
+        </div>
+        <p class="footer-text">Built for electronics learners worldwide. Ohm's Law lives here.</p>
+        <div class="footer-neon"></div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
